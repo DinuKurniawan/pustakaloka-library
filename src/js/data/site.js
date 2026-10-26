@@ -11,14 +11,14 @@ export const site = {
     youtube: 'https://www.youtube.com/',
   },
   images: {
-    hero: '/assets/img/hero/hero.svg',
+    hero: '/assets/img/hero/library-interior.webp',
     gallery: [
-      '/assets/img/koleksi/collection.svg',
-      '/assets/img/koleksi/collection.svg',
-      '/assets/img/koleksi/collection.svg',
-      '/assets/img/koleksi/collection.svg',
-      '/assets/img/koleksi/collection.svg',
-      '/assets/img/koleksi/collection.svg',
+      '/assets/img/hero/library-interior.webp',
+      '/assets/img/koleksi/book-stack.webp',
+      '/assets/img/berita/reading.webp',
+      '/assets/img/koleksi/fiction.webp',
+      '/assets/img/koleksi/technology.webp',
+      '/assets/img/koleksi/children.webp',
     ],
   },
   hours: [

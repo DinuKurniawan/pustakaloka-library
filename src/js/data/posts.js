@@ -7,7 +7,7 @@ export const posts = [
     date: '2026-10-01',
     excerpt:
       'Bukan sekadar bisa membaca, literasi membantu kita memilih informasi yang dapat dipercaya.',
-    image: '/assets/img/berita/news.svg',
+    image: '/assets/img/koleksi/fiction.webp',
     tags: ['literasi', 'informasi'],
     body: [
       {
@@ -29,7 +29,7 @@ export const posts = [
     date: '2026-09-22',
     excerpt:
       'Ajak keluarga memilih buku, membaca bersama, dan membuat karya kecil di ruang komunitas.',
-    image: '/assets/img/berita/news.svg',
+    image: '/assets/img/koleksi/children.webp',
     tags: ['kegiatan', 'keluarga'],
     body: [
       {
@@ -50,7 +50,7 @@ export const posts = [
     date: '2026-09-15',
     excerpt:
       'Puluhan judul baru tentang pemrograman, data, dan desain telah hadir di rak teknologi.',
-    image: '/assets/img/berita/news.svg',
+    image: '/assets/img/koleksi/technology.webp',
     tags: ['koleksi', 'teknologi'],
     body: [
       {
@@ -66,7 +66,7 @@ export const posts = [
     author: 'Anjelina Rossy',
     date: '2026-08-29',
     excerpt: 'Lima kebiasaan kecil agar buku tetap nyaman dibaca oleh banyak orang.',
-    image: '/assets/img/berita/news.svg',
+    image: '/assets/img/koleksi/book-stack.webp',
     tags: ['literasi', 'koleksi'],
     body: [
       {
@@ -82,7 +82,7 @@ export const posts = [
     author: 'Anjelina Rossy',
     date: '2026-08-12',
     excerpt: 'Sesi praktis untuk pelajar dan mahasiswa yang ingin menulis dengan sumber yang rapi.',
-    image: '/assets/img/berita/news.svg',
+    image: '/assets/img/koleksi/business.webp',
     tags: ['kelas', 'referensi'],
     body: [
       {
@@ -98,7 +98,7 @@ export const posts = [
     author: 'Admin Pustakaloka',
     date: '2026-07-30',
     excerpt: 'Mulai Agustus, layanan Sabtu berlangsung pukul 08.00 hingga 12.00.',
-    image: '/assets/img/berita/news.svg',
+    image: '/assets/img/hero/library-interior.webp',
     tags: ['pengumuman'],
     body: [
       {

@@ -334,7 +334,7 @@ Catatan:
 
 ## Aset dan Lisensi
 
-Sumber gambar dan catatan lisensi ada di [`assets/img/CREDITS.md`](assets/img/CREDITS.md). Data situs saat ini menggunakan foto Unsplash melalui `images.unsplash.com`, sedangkan beberapa SVG lokal tersedia sebagai fallback/demo offline.
+Sumber gambar dan catatan lisensi ada di [`assets/img/CREDITS.md`](assets/img/CREDITS.md). Foto konten statis disimpan sebagai WebP lokal; sampul buku dinamis adalah satu-satunya gambar yang masih dapat diminta dari Open Library.
 
 Sebelum deployment publik:
 
@@ -366,7 +366,7 @@ Sebelum deployment produksi, perbarui placeholder berikut:
 Contoh header keamanan yang dapat dikonfigurasi di hosting:
 
 ```text
-Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com https://covers.openlibrary.org data:; connect-src 'self' https://openlibrary.org; script-src 'self'
+Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://covers.openlibrary.org data:; connect-src 'self' https://openlibrary.org; script-src 'self'
 ```
 
 Sesuaikan CSP jika sumber font, gambar, atau aset berubah.
@@ -407,7 +407,7 @@ Periksa bahwa browser mengizinkan storage untuk `localhost:3000`. Jika storage d
 
 ### Gambar foto tidak tampil
 
-Foto Unsplash memerlukan koneksi internet. Periksa URL pada `src/js/data/site.js`, `src/js/data/categories.js`, `src/js/data/librarians.js`, dan `src/js/data/posts.js`, atau gunakan aset lokal.
+Foto konten statis berada di `assets/img/**/*.webp` dan tidak membutuhkan koneksi ke CDN foto pihak ketiga. Periksa file lokal serta URL pada `src/js/data/site.js`, `src/js/data/categories.js`, `src/js/data/librarians.js`, dan `src/js/data/posts.js`. Sampul buku katalog tetap memerlukan koneksi ke Open Library.
 
 ## Pemeriksaan Kualitas
 

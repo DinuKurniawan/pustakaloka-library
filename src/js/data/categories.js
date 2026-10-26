@@ -10,7 +10,7 @@ export const categories = [
       'Koleksi remaja',
       'Bacaan santai akhir pekan',
     ],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/fiction.webp',
   },
   {
     id: 'sains',
@@ -23,7 +23,7 @@ export const categories = [
       'Matematika',
       'Eksperimen untuk pelajar',
     ],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/science.webp',
   },
   {
     id: 'teknologi',
@@ -31,7 +31,7 @@ export const categories = [
     icon: 'monitor',
     description: 'Referensi praktis untuk membuat, memahami, dan menggunakan teknologi.',
     highlights: ['Pemrograman web', 'Data dan AI', 'Desain digital', 'Literasi media'],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/technology.webp',
   },
   {
     id: 'sejarah',
@@ -39,7 +39,7 @@ export const categories = [
     icon: 'landmark',
     description: 'Catatan masa lalu untuk membantu kita membaca masa kini.',
     highlights: ['Sejarah Indonesia', 'Biografi tokoh', 'Arsip budaya', 'Sejarah dunia'],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/history.webp',
   },
   {
     id: 'anak',
@@ -47,7 +47,7 @@ export const categories = [
     icon: 'star',
     description: 'Buku bergambar dan cerita hangat untuk pembaca kecil.',
     highlights: ['Dongeng bergambar', 'Ensiklopedia anak', 'Aktivitas kreatif', 'Bacaan pemula'],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/children.webp',
   },
   {
     id: 'bisnis',
@@ -55,7 +55,7 @@ export const categories = [
     icon: 'briefcase',
     description: 'Gagasan dan keterampilan untuk kerja, usaha, dan kepemimpinan.',
     highlights: ['Kewirausahaan', 'Keuangan pribadi', 'Manajemen', 'Karier'],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/business.webp',
   },
   {
     id: 'seni',
@@ -63,6 +63,6 @@ export const categories = [
     icon: 'palette',
     description: 'Karya, tradisi, dan gagasan yang membentuk cara kita merasa.',
     highlights: ['Seni rupa', 'Musik dan film', 'Arsitektur', 'Budaya Nusantara'],
-    banner: '/assets/img/koleksi/collection.svg',
+    banner: '/assets/img/koleksi/art.webp',
   },
 ];

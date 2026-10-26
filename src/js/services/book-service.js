@@ -3,21 +3,13 @@ const OPEN_LIBRARY_URL = 'https://openlibrary.org';
 const COVER_URL = 'https://covers.openlibrary.org/b/id';
 const FALLBACK_COVER = './assets/img/buku/cover.svg';
 const MAX_SEARCH_PAGE = 1000;
+const DEFAULT_BROWSE_QUERY = 'book';
 const SEARCH_FIELDS = [
   'key',
   'title',
-  'subtitle',
   'author_name',
-  'author_key',
   'cover_i',
   'first_publish_year',
-  'edition_key',
-  'isbn',
-  'publisher',
-  'number_of_pages_median',
-  'language',
-  'subject',
-  'first_sentence',
   'ratings_average',
   'ratings_count',
 ].join(',');
@@ -192,13 +184,9 @@ function buildQuery(query, categoryIds, language) {
   const parts = [];
   const keyword = String(query ?? '').trim();
 
-  if (keyword.length >= 3) {
-    parts.push(keyword);
-  } else if (keyword) {
-    parts.push(`title:${keyword}*`);
-  } else {
-    parts.push('title:*');
-  }
+  // Wildcard `title:*` memaksa Open Library memindai katalog besar sebelum mengurutkan hasil.
+  // Query biasa jauh lebih ringan dan tetap mencari judul, penulis, serta ISBN.
+  if (keyword) parts.push(keyword);
 
   const category = categoryIds.map((id) => CATEGORY_SUBJECTS[id] ?? id).find(Boolean);
   if (category) parts.push(`subject:${category}`);
@@ -206,7 +194,9 @@ function buildQuery(query, categoryIds, language) {
   const languageCode = LANGUAGE_CODES[language] ?? language;
   if (languageCode) parts.push(`language:${languageCode}`);
 
-  return parts.join(' ');
+  // Search API membutuhkan query untuk mode jelajah tanpa filter; gunakan istilah umum,
+  // bukan wildcard, agar beranda dan katalog awal tidak menunggu query global.
+  return parts.join(' ') || DEFAULT_BROWSE_QUERY;
 }
 
 /**
