@@ -84,7 +84,7 @@ Aplikasi ini berjalan sepenuhnya di browser:
 | JavaScript      | Vanilla JavaScript ES Modules, target ES2022+                |
 | Data buku       | Open Library Search, Works, Books, Authors, dan Covers API   |
 | Konten lokal    | Modul JavaScript di `src/js/data/`                           |
-| Font            | Poppins dari Google Fonts                                    |
+| Font            | Poppins latin self-hosted (400, 500, 600)                    |
 | Ikon            | SVG inline dari `src/js/utils/icons.js`                      |
 | Server lokal    | `serve`                                                      |
 | Build           | Tailwind CLI dan Concurrently                                |
@@ -120,7 +120,7 @@ http://localhost:3000
 `npm run dev` menjalankan dua proses:
 
 1. Tailwind CSS dalam mode watch dari `src/css/input.css` ke `dist/output.css`.
-2. Server statis `serve` pada port 3000.
+2. Server statis `serve` pada port 3000. Mode dev memakai ES Modules sumber tanpa bundling.
 
 Untuk hanya menjalankan server setelah CSS sudah tersedia:
 
@@ -141,28 +141,33 @@ npm ci
 npm run build
 ```
 
-Build menghasilkan CSS minified di:
+Build menghasilkan situs produksi di `dist/` dengan CSS dan JavaScript minified:
 
 ```text
 dist/output.css
+dist/js/
+dist/index.html
 ```
 
-Folder `dist/` diabaikan Git. Jalankan `npm run build` kembali di mesin deployment atau pipeline CI sebelum situs dipublikasikan.
+Folder `dist/` diabaikan Git. Jalankan `npm run build` kembali di mesin deployment atau pipeline CI sebelum situs dipublikasikan. HTML di `dist/` menunjuk ke bundle esbuild; HTML sumber tetap menunjuk ke ES Modules untuk dev.
 
 ## Perintah NPM
 
-| Perintah               | Kegunaan                                                |
-| ---------------------- | ------------------------------------------------------- |
-| `npm install`          | Memasang dependency development dari `package.json`.    |
-| `npm ci`               | Instalasi reproducible berdasarkan `package-lock.json`. |
-| `npm run dev`          | Menjalankan watcher CSS dan server lokal bersamaan.     |
-| `npm run dev:css`      | Menjalankan Tailwind CSS watch saja.                    |
-| `npm run dev:serve`    | Menjalankan server statis pada port 3000.               |
-| `npm run build`        | Membuat `dist/output.css` versi minified.               |
-| `npm run lint`         | Menjalankan ESLint pada `src/js`.                       |
-| `npm run format`       | Memformat seluruh repository dengan Prettier.           |
-| `npm run format:check` | Memeriksa format tanpa mengubah file.                   |
-| `npm run check`        | Menjalankan lint lalu format check.                     |
+| Perintah                | Kegunaan                                                |
+| ----------------------- | ------------------------------------------------------- |
+| `npm install`           | Memasang dependency development dari `package.json`.    |
+| `npm ci`                | Instalasi reproducible berdasarkan `package-lock.json`. |
+| `npm run dev`           | Menjalankan watcher CSS dan server lokal bersamaan.     |
+| `npm run dev:css`       | Menjalankan Tailwind CSS watch saja.                    |
+| `npm run dev:serve`     | Menjalankan server statis pada port 3000.               |
+| `npm run optimize:hero` | Membuat varian hero WebP 480/800 px.                    |
+| `npm run build:css`     | Membuat `dist/output.css` versi minified.               |
+| `npm run build:js`      | Membuat bundle JavaScript dan salinan HTML produksi.    |
+| `npm run build`         | Menjalankan optimasi gambar, build CSS, dan build JS.   |
+| `npm run lint`          | Menjalankan ESLint pada `src/js`.                       |
+| `npm run format`        | Memformat seluruh repository dengan Prettier.           |
+| `npm run format:check`  | Memeriksa format tanpa mengubah file.                   |
+| `npm run check`         | Menjalankan lint lalu format check.                     |
 
 ## Struktur Proyek
 
@@ -429,9 +434,9 @@ Proyek dapat dipublikasikan ke Vercel, Netlify, GitHub Pages, atau hosting stati
 `vercel.json` sudah mendefinisikan:
 
 - Build command: `npm run build`
-- Output directory: `.`
+- Output directory: `dist`
 
-Dengan konfigurasi tersebut, HTML, `src/`, `assets/`, dan `dist/` dipublikasikan dari root repository.
+Dengan konfigurasi tersebut, HTML produksi, bundle, CSS, dan aset yang dipublikasikan berasal dari `dist/`.
 
 ### Deployment manual
 
@@ -440,19 +445,33 @@ npm ci
 npm run build
 ```
 
-Publikasikan file dan folder berikut:
+Publikasikan isi `dist/` setelah build:
 
 ```text
-index.html
-src/
-assets/
-dist/
-favicon.svg
-robots.txt
-sitemap.xml
+dist/index.html
+dist/src/
+dist/assets/
+dist/js/
+dist/output.css
+dist/favicon.svg
+dist/robots.txt
+dist/sitemap.xml
 ```
 
 Jangan publikasikan `node_modules/`, `.env`, token, secret, atau file lokal pribadi.
+
+### Cloudflare Pages / CDN
+
+File [`_headers`](_headers) disalin otomatis ke `dist/` oleh `npm run build`. Untuk pengaturan dashboard Cloudflare:
+
+1. Pada **Web Analytics**, matikan **Automatic Web Analytics injection**. Jika beacon diperlukan, pasang script beacon sendiri dengan atribut `defer` dan ukur dampaknya kembali.
+2. Pada **Speed → Optimization**, matikan **Rocket Loader** agar ES Modules dan urutan bootstrap tidak diubah.
+3. Aktifkan **Early Hints** dan **Brotli**.
+4. Buat **Cache Rule** untuk `/assets/*` dengan TTL browser/edge 1 tahun dan `immutable`.
+5. Buat **Cache Rule** untuk `/js/chunks/*` dengan TTL 1 tahun dan `immutable`; gunakan cache pendek untuk `/js/*` karena entry bundle memakai nama stabil.
+6. Gunakan cache pendek untuk HTML (`max-age=300`) agar metadata dan navigasi cepat diperbarui.
+
+Setelah mengubah konfigurasi, jalankan Lighthouse pada URL produksi dalam mode mobile cold-cache dan ulangi pengukuran tanpa beacon untuk membedakan biaya situs dari biaya analytics.
 
 ### Sebelum produksi
 
@@ -467,7 +486,7 @@ Perbarui placeholder yang masih menggunakan `example.com`:
 Contoh kebijakan CSP yang dapat disesuaikan di hosting:
 
 ```text
-Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://covers.openlibrary.org data:; connect-src 'self' https://openlibrary.org; script-src 'self'
+Content-Security-Policy: default-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' https://covers.openlibrary.org data:; connect-src 'self' https://openlibrary.org; script-src 'self'
 ```
 
 Sesuaikan CSP jika font, gambar, API, atau sumber lain berubah.
