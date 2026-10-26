@@ -34,7 +34,8 @@ import { escapeHTML as e } from '../utils/escape.js';
 import { validateDate, validators } from '../utils/validate.js';
 
 const main = () => document.querySelector('#main');
-const categoryName = (id) => categories.find((category) => category.id === id)?.name ?? id;
+const categoryName = (id) =>
+  categories.find((category) => category.id === id)?.name ?? (id === 'umum' ? 'Katalog umum' : id);
 
 const pageBanner = (title, trail = []) =>
   `<section class="page-banner"><div class="container-page">${breadcrumb(trail, { dark: true })}<h1 class="text-3xl font-bold text-white md:text-5xl">${e(title)}</h1></div></section>`;
@@ -558,5 +559,15 @@ export async function startPage(page) {
     saved: renderSaved,
     'not-found': renderNotFound,
   };
-  await (renderers[page] ?? renderNotFound)();
+  try {
+    await (renderers[page] ?? renderNotFound)();
+  } catch (error) {
+    console.error(error);
+    main().innerHTML = `<section class="section"><div class="container-page"><div class="mx-auto max-w-xl bg-danger-50 p-8 text-center"><h1 class="text-2xl font-bold text-ink-900">Data buku belum dapat dimuat</h1><p class="mt-3 text-sm text-body">Periksa koneksi internet Anda lalu coba muat ulang halaman.</p><button class="btn-primary mt-6" type="button" data-action="reload-page">Coba lagi</button></div></div></section>`;
+    main()
+      .querySelector('[data-action="reload-page"]')
+      ?.addEventListener('click', () => {
+        window.location.reload();
+      });
+  }
 }

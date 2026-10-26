@@ -8,3 +8,5 @@ Gambar foto menggunakan Unsplash dan dimuat dari CDN resminya (`images.unsplash.
 - Lisensi: lihat [Unsplash License](https://unsplash.com/license). Nama pustakawan pada data adalah tokoh demo, bukan identitas fotografer/model.
 
 SVG lokal pada folder ini tetap tersedia sebagai fallback/demo offline, tetapi data aplikasi sekarang memakai foto Unsplash.
+
+Sampul buku katalog dinamis berasal dari Open Library Covers API dan ditampilkan menggunakan cover ID yang dikembalikan oleh Open Library. Sampul fallback lokal berada di `buku/cover.svg`.

@@ -17,7 +17,7 @@
 
 Pustakaloka adalah website resmi perpustakaan yang menampilkan profil, koleksi, layanan, pustakawan, dan berita, serta membantu pengunjung **mencari buku**, **melihat ketersediaan**, dan **membuat reservasi** (ruang baca, buku, atau konsultasi pustakawan).
 
-Website dibangun sebagai situs multi-halaman statis tanpa framework dan tanpa backend. Seluruh data (buku, kategori, layanan, pustakawan, berita) disimpan sebagai modul JavaScript di dalam repo. Interaksi pengguna (simpanan buku, reservasi, pendaftaran) disimulasikan lewat `localStorage` dan dirancang agar mudah diganti dengan API nyata di kemudian hari.
+Website dibangun sebagai situs multi-halaman statis tanpa framework dan tanpa backend. Metadata buku diambil secara dinamis dari Open Library API, sedangkan kategori, layanan, pustakawan, dan berita disimpan sebagai modul JavaScript di dalam repo. Interaksi pengguna (simpanan buku, reservasi, pendaftaran) disimulasikan lewat `localStorage` dan dirancang agar mudah diganti dengan API perpustakaan nyata di kemudian hari.
 
 ## 2. Latar Belakang & Masalah
 
@@ -409,26 +409,26 @@ Gunakan alat privacy-friendly (mis. Plausible/Umami). Event yang disarankan: `se
 | Aset gambar berhak cipta                                       | Sedang      | Tinggi | Wajibkan `CREDITS.md`, hanya gambar berlisensi                          |
 | Teal brand (#0FB3B5) berkontras rendah dengan teks putih kecil | Tinggi      | Sedang | Gunakan `brand-700` untuk tombol/teks kecil (lihat `Design.md`)         |
 | Header/footer via JS menyebabkan CLS & SEO lemah               | Sedang      | Sedang | Reservasi tinggi, `<noscript>`, opsi skrip build partial di fase lanjut |
-| Data bertambah besar → halaman lambat                          | Rendah      | Sedang | Paginasi, `loading="lazy"`, rencana migrasi ke JSON/API                 |
+| Data bertambah besar → halaman lambat                          | Rendah      | Sedang | Paginasi, `loading="lazy"`, Search API dengan `limit` dan `page`        |
 | Pengelola salah sintaks saat edit data                         | Sedang      | Sedang | Panduan + ESLint + contoh data lengkap                                  |
 | `localStorage` tidak tersedia (mode privat)                    | Sedang      | Rendah | Fallback memori + pesan jelas                                           |
 
 ## 19. Rencana Rilis
 
-| Fase            | Cakupan                                                                | Output         |
-| --------------- | ---------------------------------------------------------------------- | -------------- |
-| **0 — Setup**   | Repo, Tailwind v4, `input.css` + token, layout bersama, komponen dasar | Kerangka siap  |
-| **1 — Inti**    | Beranda, Katalog, Detail Buku, Tentang, Kontak, 404                    | MVP browsing   |
-| **2 — Layanan** | Koleksi, Layanan, Reservasi, Pustakawan                                | Alur reservasi |
-| **3 — Konten**  | Berita, Daftar Anggota, Simpanan, FAQ                                  | Fitur lengkap  |
-| **4 — Polish**  | SEO, aksesibilitas, performa, QA lintas browser, deploy                | Rilis 1.0      |
-| **Setelah 1.0** | Dark mode, i18n (EN), backend/API, form service nyata, PWA offline     | Roadmap        |
+| Fase            | Cakupan                                                                   | Output         |
+| --------------- | ------------------------------------------------------------------------- | -------------- |
+| **0 — Setup**   | Repo, Tailwind v4, `input.css` + token, layout bersama, komponen dasar    | Kerangka siap  |
+| **1 — Inti**    | Beranda, Katalog, Detail Buku, Tentang, Kontak, 404                       | MVP browsing   |
+| **2 — Layanan** | Koleksi, Layanan, Reservasi, Pustakawan                                   | Alur reservasi |
+| **3 — Konten**  | Berita, Daftar Anggota, Simpanan, FAQ                                     | Fitur lengkap  |
+| **4 — Polish**  | SEO, aksesibilitas, performa, QA lintas browser, deploy                   | Rilis 1.0      |
+| **Setelah 1.0** | Dark mode, i18n (EN), backend inventaris, form service nyata, PWA offline | Roadmap        |
 
 ## 20. Pertanyaan Terbuka
 
 1. Nama resmi, logo, dan warna brand final perpustakaan?
 2. Jenis perpustakaan (sekolah/kampus/umum/daerah)? Memengaruhi kategori koleksi dan jenis anggota.
-3. Jumlah awal data buku (untuk menentukan perlunya JSON/API)?
+3. Apakah metadata Open Library perlu digabungkan dengan database inventaris lokal?
 4. Apakah reservasi perlu terhubung ke WhatsApp/email petugas pada fase berikutnya?
 5. Sumber foto (milik sendiri vs stok berlisensi)?
 6. Domain dan platform hosting?

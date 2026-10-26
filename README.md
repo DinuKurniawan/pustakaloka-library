@@ -2,7 +2,7 @@
 
 Website perpustakaan multi-halaman untuk menjelajah koleksi, membaca informasi layanan, mengenal pustakawan, dan melakukan simulasi reservasi serta pendaftaran anggota.
 
-Proyek ini adalah **frontend statis**: tidak memiliki backend, login, database, atau integrasi pengiriman formulir. Data konten disimpan sebagai modul JavaScript di repository, sedangkan simpanan buku, reservasi, dan pendaftaran anggota disimpan secara lokal di browser pengguna.
+Proyek ini adalah **frontend statis**: tidak memiliki backend, login, database, atau integrasi pengiriman formulir. Metadata katalog buku diambil secara dinamis dari Open Library API, sedangkan konten situs lainnya disimpan sebagai modul JavaScript di repository. Simpanan buku, reservasi, dan pendaftaran anggota disimpan secara lokal di browser pengguna.
 
 ## Daftar Isi
 
@@ -28,10 +28,10 @@ Proyek ini adalah **frontend statis**: tidak memiliki backend, login, database, 
 
 - Beranda dengan hero, pencarian katalog, koleksi, layanan, buku terbaru, reservasi, pustakawan, dan berita terbaru.
 - Katalog buku dengan pencarian berdasarkan judul, penulis, ISBN, dan tag.
-- Filter katalog berdasarkan kategori, bahasa, dan ketersediaan.
+- Filter katalog berdasarkan kategori dan bahasa.
 - Pengurutan katalog berdasarkan buku terbaru, judul A–Z, judul Z–A, dan popularitas.
 - Paginasi katalog dengan 12 buku per halaman.
-- Detail buku dengan metadata, stok, lokasi rak, sinopsis, buku terkait, dan tombol salin tautan.
+- Detail buku dengan metadata Open Library, informasi ketersediaan yang perlu dikonfirmasi, buku terkait, dan tautan sumber.
 - Simpan/hapus buku dari daftar simpanan dengan badge jumlah pada header.
 - Halaman koleksi dengan tujuh kategori dan empat buku pilihan per kategori.
 - Halaman layanan dengan delapan layanan, syarat, jam layanan, dan aturan peminjaman.
@@ -54,6 +54,7 @@ Proyek ini adalah **frontend statis**: tidak memiliki backend, login, database, 
 | Markup       | HTML5 semantik                                                |
 | Styling      | Tailwind CSS v4 melalui `@tailwindcss/cli`                    |
 | JavaScript   | Vanilla JavaScript ES Modules, tanpa framework runtime        |
+| Data buku    | Open Library Search API dan Works/Books API                   |
 | Font         | Poppins dari Google Fonts                                     |
 | Ikon         | SVG inline dari `src/js/utils/icons.js`                       |
 | Server lokal | `serve`                                                       |
@@ -135,9 +136,9 @@ perpustakaan/
 │   │   └── input.css           # entry point Tailwind dan design token
 │   └── js/
 │       ├── components/         # header, footer, kartu, toast, dll.
-│       ├── data/               # konten statis yang dapat diedit
+│       ├── data/               # konten situs statis yang dapat diedit
 │       ├── pages/              # entry point setiap halaman + renderer bersama
-│       ├── services/           # akses data dan state aplikasi
+│       ├── services/           # akses Open Library, konten, dan state aplikasi
 │       └── utils/              # escape, URL, validasi, format, ikon, storage
 ├── assets/
 │   └── img/
@@ -181,22 +182,22 @@ Entry point tersebut mendelegasikan rendering ke `src/js/pages/app.js`, lalu `st
 
 Beranda dan halaman pustakawan berada di root; halaman lainnya berada di `src/pages/`.
 
-| File                  | `data-page`   | Isi                                              | Parameter utama                                      |
-| --------------------- | ------------- | ------------------------------------------------ | ---------------------------------------------------- |
-| `index.html`          | `home`        | Beranda dan pencarian cepat                      | —                                                    |
-| `katalog.html`        | `catalog`     | Pencarian, filter, pengurutan, dan paginasi buku | `q`, `kategori`, `bahasa`, `tersedia`, `urut`, `hal` |
-| `buku.html`           | `book`        | Detail satu buku                                 | `id`                                                 |
-| `koleksi.html`        | `collections` | Koleksi dan buku pilihan berdasarkan kategori    | `kategori`                                           |
-| `layanan.html`        | `services`    | Daftar layanan dan aturan peminjaman             | Anchor `#id-layanan`                                 |
-| `reservasi.html`      | `reservation` | Form reservasi dan daftar reservasi lokal        | `layanan`, `pustakawan`, `buku`                      |
-| `pustakawan.html`     | `librarians`  | Daftar pustakawan dan jadwal                     | —                                                    |
-| `berita.html`         | `news`        | Daftar berita dan filter kategori                | `kategori`, `hal`                                    |
-| `berita-detail.html`  | `news-detail` | Detail berita                                    | `id`                                                 |
-| `tentang.html`        | `about`       | Profil, visi, misi, statistik, dan jam buka      | —                                                    |
-| `kontak.html`         | `contact`     | Kontak, formulir pesan, dan FAQ                  | —                                                    |
-| `daftar-anggota.html` | `membership`  | Pendaftaran anggota demo                         | —                                                    |
-| `simpanan.html`       | `saved`       | Daftar buku yang disimpan                        | —                                                    |
-| `404.html`            | `not-found`   | Halaman tidak ditemukan dan pencarian katalog    | —                                                    |
+| File                  | `data-page`   | Isi                                              | Parameter utama                          |
+| --------------------- | ------------- | ------------------------------------------------ | ---------------------------------------- |
+| `index.html`          | `home`        | Beranda dan pencarian cepat                      | —                                        |
+| `katalog.html`        | `catalog`     | Pencarian, filter, pengurutan, dan paginasi buku | `q`, `kategori`, `bahasa`, `urut`, `hal` |
+| `buku.html`           | `book`        | Detail satu buku                                 | `id`                                     |
+| `koleksi.html`        | `collections` | Koleksi dan buku pilihan berdasarkan kategori    | `kategori`                               |
+| `layanan.html`        | `services`    | Daftar layanan dan aturan peminjaman             | Anchor `#id-layanan`                     |
+| `reservasi.html`      | `reservation` | Form reservasi dan daftar reservasi lokal        | `layanan`, `pustakawan`, `buku`          |
+| `pustakawan.html`     | `librarians`  | Daftar pustakawan dan jadwal                     | —                                        |
+| `berita.html`         | `news`        | Daftar berita dan filter kategori                | `kategori`, `hal`                        |
+| `berita-detail.html`  | `news-detail` | Detail berita                                    | `id`                                     |
+| `tentang.html`        | `about`       | Profil, visi, misi, statistik, dan jam buka      | —                                        |
+| `kontak.html`         | `contact`     | Kontak, formulir pesan, dan FAQ                  | —                                        |
+| `daftar-anggota.html` | `membership`  | Pendaftaran anggota demo                         | —                                        |
+| `simpanan.html`       | `saved`       | Daftar buku yang disimpan                        | —                                        |
+| `404.html`            | `not-found`   | Halaman tidak ditemukan dan pencarian katalog    | —                                        |
 
 ## Parameter URL
 
@@ -207,10 +208,10 @@ Contoh tautan yang dapat digunakan atau dibagikan:
 ./katalog.html?q=web&kategori=teknologi
 
 # Filter katalog
-./katalog.html?kategori=sains&bahasa=id&tersedia=1&urut=popular&hal=2
+./katalog.html?kategori=sains&bahasa=id&urut=popular&hal=2
 
 # Detail buku
-./buku.html?id=dasar-dasar-pemrograman-web
+./buku.html?id=OL27448W
 
 # Koleksi tertentu
 ./koleksi.html?kategori=teknologi
@@ -220,7 +221,7 @@ Contoh tautan yang dapat digunakan atau dibagikan:
 
 # Prefill form reservasi
 ./reservasi.html?layanan=ruang-diskusi&pustakawan=anjelina-rossy
-./reservasi.html?buku=dasar-dasar-pemrograman-web
+./reservasi.html?buku=OL27448W
 
 # Berita
 ./berita.html?kategori=literasi&hal=1
@@ -246,7 +247,7 @@ Komponen untuk markup dan perilaku lintas halaman, antara lain:
 
 Service adalah satu-satunya lapisan yang semestinya mengakses modul data dan storage:
 
-- `book-service.js`: pencarian, filter, pengurutan, detail, dan buku terkait.
+- `book-service.js`: mengambil metadata dinamis dari Open Library, menormalisasi hasil API, filter, pengurutan, detail, dan buku terkait.
 - `content-service.js`: kategori, layanan, pustakawan, berita, dan FAQ.
 - `bookmark-service.js`: tambah, hapus, dan kosongkan simpanan.
 - `reservation-service.js`: simpan, baca, dan batalkan reservasi.
@@ -254,7 +255,7 @@ Service adalah satu-satunya lapisan yang semestinya mengakses modul data dan sto
 
 ### `data/`
 
-Seed data saat ini terdiri dari tujuh kategori, delapan layanan, empat pustakawan, 24 buku, enam berita, dan enam FAQ. Untuk menjaga halaman tetap konsisten, halaman dan komponen sebaiknya mengakses data melalui service, bukan mengimpor file data secara langsung.
+Konten lokal saat ini terdiri dari tujuh kategori, delapan layanan, empat pustakawan, enam berita, dan enam FAQ. Tidak ada seed buku lokal; katalog mengambil data langsung dari Open Library melalui `src/js/services/book-service.js`.
 
 ### `utils/`
 
@@ -280,39 +281,22 @@ Edit `src/js/data/site.js` untuk mengubah:
 - Foto hero dan galeri.
 - Jam operasional dan hari tutup.
 
-### Menambah atau mengubah buku
+### Katalog buku dari Open Library
 
-Edit `src/js/data/books.js`. Setiap buku minimal memiliki bentuk berikut:
+Katalog, halaman Koleksi, buku terbaru di beranda, detail buku, buku terkait, dan Simpanan menggunakan Open Library API. Tidak diperlukan API key. Jalankan situs melalui server lokal agar browser dapat melakukan request API:
 
-```js
-{
-  id: 'slug-buku-unik',
-  title: 'Judul Buku',
-  author: 'Nama Penulis',
-  isbn: '978-602-0000-00-0',
-  categoryId: 'teknologi',
-  publisher: 'Nama Penerbit',
-  year: 2026,
-  pages: 240,
-  language: 'id',
-  synopsis: 'Sinopsis singkat buku.',
-  tags: ['web', 'javascript'],
-  cover: 'assets/img/buku/cover.svg',
-  stock: { total: 3, available: 2 },
-  shelf: 'TEK-005 / Rak B2',
-  rating: 4.5,
-  popularity: 100,
-  addedAt: '2026-10-01',
-}
+```bash
+npm run dev
 ```
 
-Aturan penting:
+Konfigurasi integrasi berada di `src/js/services/book-service.js`:
 
-- `id` harus unik, huruf kecil, dan memakai tanda hubung.
-- `categoryId` harus cocok dengan ID di `src/js/data/categories.js`.
-- `stock.available` tidak boleh lebih besar dari `stock.total`.
-- File gambar pada `cover` harus benar-benar ada atau menggunakan URL yang sengaja dipilih.
-- Gunakan isi bermakna; jangan merilis `lorem ipsum`.
+- `searchBooks()` menggunakan Search API dengan paginasi, kategori, bahasa, dan pengurutan.
+- `getBookById()` mengambil Work atau Edition berdasarkan ID Open Library.
+- Cover diambil dari Covers API dengan cover ID yang dikembalikan Open Library.
+- Hasil API dinormalisasi ke skema kartu buku yang dipakai Pustakaloka.
+
+Open Library hanya menyediakan metadata katalog umum. Stok fisik, lokasi rak, peminjaman, dan reservasi perpustakaan belum disediakan API sehingga ditampilkan sebagai “Perlu dikonfirmasi”. Jika nanti tersedia backend perpustakaan, field tersebut dapat digabungkan di service tanpa mengubah komponen kartu.
 
 ### Mengubah kategori, layanan, pustakawan, berita, dan FAQ
 
@@ -382,7 +366,7 @@ Sebelum deployment produksi, perbarui placeholder berikut:
 Contoh header keamanan yang dapat dikonfigurasi di hosting:
 
 ```text
-Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com data:; script-src 'self'
+Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.unsplash.com https://covers.openlibrary.org data:; connect-src 'self' https://openlibrary.org; script-src 'self'
 ```
 
 Sesuaikan CSP jika sumber font, gambar, atau aset berubah.
