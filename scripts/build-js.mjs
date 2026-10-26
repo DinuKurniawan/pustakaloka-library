@@ -34,9 +34,8 @@ await build({
   outbase: path.join(root, 'src/js/pages'),
   entryNames: '[name]',
   chunkNames: 'chunks/[name]-[hash]',
-  metafile: true,
   logLevel: 'info',
-}).then((result) => writeFile(path.join(dist, 'js/meta.json'), JSON.stringify(result.metafile)));
+});
 
 await cp(path.join(root, 'assets'), path.join(dist, 'assets'), { recursive: true });
 await cp(path.join(root, 'favicon.svg'), path.join(dist, 'favicon.svg'));
