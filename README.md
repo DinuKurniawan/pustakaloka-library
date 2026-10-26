@@ -1,304 +1,372 @@
 # Pustakaloka
 
-Website perpustakaan multi-halaman untuk menjelajah koleksi, membaca informasi layanan, mengenal pustakawan, dan melakukan simulasi reservasi serta pendaftaran anggota.
+Pustakaloka adalah website perpustakaan statis multi-halaman untuk menemukan buku, menjelajahi koleksi, membaca berita, mengenal pustakawan, melakukan simulasi reservasi, dan mendaftarkan anggota.
 
-Proyek ini adalah **frontend statis**: tidak memiliki backend, login, database, atau integrasi pengiriman formulir. Metadata katalog buku diambil secara dinamis dari Open Library API, sedangkan konten situs lainnya disimpan sebagai modul JavaScript di repository. Simpanan buku, reservasi, dan pendaftaran anggota disimpan secara lokal di browser pengguna.
+Aplikasi ini berjalan sepenuhnya di browser:
+
+- Tidak memiliki backend, database, login, atau dashboard admin.
+- Metadata buku diambil dari Open Library API.
+- Kategori, layanan, pustakawan, berita, FAQ, dan identitas situs disimpan sebagai modul JavaScript lokal.
+- Simpanan buku, reservasi, dan pendaftaran anggota disimpan di `localStorage` browser.
+- Form Kontak hanya menampilkan konfirmasi lokal; tidak mengirim pesan ke petugas.
+
+> Gunakan server HTTP lokal. Jangan membuka halaman dengan `file://` karena ES Modules, path relatif, dan request API dapat gagal atau diblokir browser.
 
 ## Daftar Isi
 
 - [Fitur](#fitur)
 - [Teknologi](#teknologi)
 - [Prasyarat](#prasyarat)
-- [Menjalankan Proyek](#menjalankan-proyek)
-- [Perintah yang Tersedia](#perintah-yang-tersedia)
+- [Memulai](#memulai)
+- [Perintah NPM](#perintah-npm)
 - [Struktur Proyek](#struktur-proyek)
 - [Daftar Halaman](#daftar-halaman)
 - [Parameter URL](#parameter-url)
-- [Arsitektur Aplikasi](#arsitektur-aplikasi)
+- [Arsitektur](#arsitektur)
+- [Sumber Data dan Open Library](#sumber-data-dan-open-library)
 - [Mengubah Konten](#mengubah-konten)
-- [Penyimpanan Browser](#penyimpanan-browser)
+- [State Browser](#state-browser)
 - [Aset dan Lisensi](#aset-dan-lisensi)
-- [Build dan Deployment](#build-dan-deployment)
+- [Deployment](#deployment)
 - [Troubleshooting](#troubleshooting)
-- [Pemeriksaan Kualitas](#pemeriksaan-kualitas)
+- [Checklist QA](#checklist-qa)
 - [Batasan Saat Ini](#batasan-saat-ini)
 - [Dokumentasi Terkait](#dokumentasi-terkait)
+- [Lisensi](#lisensi)
 
 ## Fitur
 
-- Beranda dengan hero, pencarian katalog, koleksi, layanan, buku terbaru, reservasi, pustakawan, dan berita terbaru.
-- Katalog buku dengan pencarian berdasarkan judul, penulis, ISBN, dan tag.
-- Filter katalog berdasarkan kategori dan bahasa.
-- Pengurutan katalog berdasarkan buku terbaru, judul A–Z, judul Z–A, dan popularitas.
-- Paginasi katalog dengan 12 buku per halaman.
-- Detail buku dengan metadata Open Library, informasi ketersediaan yang perlu dikonfirmasi, buku terkait, dan tautan sumber.
-- Simpan/hapus buku dari daftar simpanan dengan badge jumlah pada header.
-- Halaman koleksi dengan tujuh kategori dan empat buku pilihan per kategori.
-- Halaman layanan dengan delapan layanan, syarat, jam layanan, dan aturan peminjaman.
-- Form reservasi dengan prefill layanan, pustakawan, atau buku melalui query string.
-- Validasi nama, email, telepon, tanggal, layanan, dan hari tutup Minggu.
-- Kode reservasi berbentuk `RSV-YYYYMMDD-XXXX`.
-- Daftar reservasi tersimpan dengan opsi pembatalan.
-- Daftar pustakawan dan jadwal konsultasi.
-- Daftar berita dengan filter kategori dan paginasi, serta halaman detail berita.
-- Halaman Tentang, Kontak & FAQ, Daftar Anggota, Simpanan, dan 404.
-- Header, footer, menu mobile, dropdown, toast, breadcrumb, kartu, dan paginasi yang dipakai lintas halaman.
-- Fallback memori ketika `localStorage` tidak tersedia atau tidak dapat ditulis.
-- Markup dinamis di-escape melalui `escapeHTML()` sebelum dirender.
-- Layout responsif mobile-first dan dukungan `prefers-reduced-motion` pada CSS.
+### Eksplorasi buku
+
+- Beranda dengan pencarian cepat dan buku terbaru.
+- Katalog buku dengan pencarian judul, penulis, ISBN, atau kata kunci.
+- Filter berdasarkan kategori dan bahasa.
+- Pengurutan berdasarkan terbaru, judul A–Z, judul Z–A, dan rating/popularitas.
+- Paginasi katalog, 12 buku per halaman secara default.
+- Detail buku dari Work atau Edition Open Library.
+- Buku terkait berdasarkan subjek buku.
+- Cover buku dari Open Library Covers API dengan cover fallback lokal.
+- Informasi stok, lokasi rak, peminjaman, dan reservasi fisik diberi status perlu dikonfirmasi karena belum terhubung ke sistem perpustakaan nyata.
+
+### Konten perpustakaan
+
+- Tujuh koleksi buku: fiksi, sains, teknologi, sejarah, anak, bisnis, dan seni.
+- Delapan layanan perpustakaan.
+- Daftar pustakawan dan bidang konsultasi.
+- Berita dengan filter kategori, paginasi, dan halaman detail.
+- FAQ, informasi kontak, profil perpustakaan, visi, misi, dan jam operasional.
+
+### Interaksi pengguna
+
+- Simpan dan hapus buku dari halaman Simpanan.
+- Badge jumlah simpanan pada header.
+- Reservasi layanan dengan validasi nama, email, telepon, tanggal, layanan, dan hari tutup Minggu.
+- Prefill reservasi melalui query string untuk layanan, pustakawan, atau buku.
+- Pendaftaran anggota demo dengan nomor anggota sementara.
+- Menu mobile, menu tambahan, overlay pencarian, toast, breadcrumb, accordion, dan tombol kembali ke atas.
+- State lokal tetap aman ketika `localStorage` diblokir atau penuh dengan fallback memori selama halaman masih terbuka.
+
+### Aksesibilitas dan keamanan dasar
+
+- HTML semantik, landmark halaman, skip link, label form, dan atribut ARIA.
+- Fokus keyboard menggunakan `:focus-visible`.
+- Status dinamis diumumkan melalui elemen status atau toast.
+- Dukungan `prefers-reduced-motion`.
+- Nilai dari URL, formulir, dan storage di-escape sebelum dimasukkan ke markup.
+- Tidak menggunakan framework runtime, `eval`, `document.write`, atau inline `onclick`.
 
 ## Teknologi
 
-| Area         | Teknologi                                                     |
-| ------------ | ------------------------------------------------------------- |
-| Markup       | HTML5 semantik                                                |
-| Styling      | Tailwind CSS v4 melalui `@tailwindcss/cli`                    |
-| JavaScript   | Vanilla JavaScript ES Modules, tanpa framework runtime        |
-| Data buku    | Open Library Search API dan Works/Books API                   |
-| Font         | Poppins dari Google Fonts                                     |
-| Ikon         | SVG inline dari `src/js/utils/icons.js`                       |
-| Server lokal | `serve`                                                       |
-| Tooling      | ESLint, Prettier, `prettier-plugin-tailwindcss`, Concurrently |
-| Node.js      | Disarankan Node.js 20 LTS atau lebih baru                     |
+| Area            | Teknologi                                                    |
+| --------------- | ------------------------------------------------------------ |
+| Markup          | HTML5 semantik dengan `lang="id"`                            |
+| Styling         | Tailwind CSS v4 melalui `@tailwindcss/cli`                   |
+| JavaScript      | Vanilla JavaScript ES Modules, target ES2022+                |
+| Data buku       | Open Library Search, Works, Books, Authors, dan Covers API   |
+| Konten lokal    | Modul JavaScript di `src/js/data/`                           |
+| Font            | Poppins dari Google Fonts                                    |
+| Ikon            | SVG inline dari `src/js/utils/icons.js`                      |
+| Server lokal    | `serve`                                                      |
+| Build           | Tailwind CLI dan Concurrently                                |
+| Quality tooling | ESLint, Prettier, `prettier-plugin-tailwindcss`              |
+| Deployment      | Hosting statis; konfigurasi Vercel tersedia di `vercel.json` |
 
-Tidak ada dependensi JavaScript pihak ketiga yang dikirim ke browser saat runtime. Dependensi pada `package.json` hanya digunakan untuk development dan build CSS.
+Tidak ada dependensi JavaScript pihak ketiga yang dikirim sebagai runtime ke browser. Semua paket di `package.json` digunakan untuk development, lint, formatting, atau build CSS.
 
 ## Prasyarat
 
-Pastikan perangkat sudah memiliki:
+Pastikan perangkat memiliki:
 
 1. Node.js 20 LTS atau lebih baru.
-2. npm yang ikut terpasang bersama Node.js.
+2. npm yang terpasang bersama Node.js.
 3. Browser modern seperti Chrome, Edge, Firefox, atau Safari.
+4. Koneksi internet ketika membuka katalog, detail buku, atau cover Open Library.
 
-## Menjalankan Proyek
+## Memulai
+
+Jalankan dari folder repository:
 
 ```bash
 npm install
-```
-
-### Mode development
-
-```bash
 npm run dev
 ```
 
-Perintah tersebut menjalankan dua proses secara bersamaan:
+Kemudian buka:
 
-- Tailwind CSS dalam mode watch.
-- Server statis pada `http://localhost:3000`.
+```text
+http://localhost:3000
+```
 
-Buka `http://localhost:3000` di browser. **Jangan membuka halaman langsung melalui `file://`** karena browser dapat memblokir ES Modules dan perilaku routing relatif.
+`npm run dev` menjalankan dua proses:
+
+1. Tailwind CSS dalam mode watch dari `src/css/input.css` ke `dist/output.css`.
+2. Server statis `serve` pada port 3000.
+
+Untuk hanya menjalankan server setelah CSS sudah tersedia:
+
+```bash
+npm run dev:serve
+```
+
+Untuk hanya menjalankan watcher Tailwind:
+
+```bash
+npm run dev:css
+```
 
 ### Build produksi
 
 ```bash
+npm ci
 npm run build
 ```
 
-Hasil CSS minify ditulis ke `dist/output.css`. Folder `dist/` masuk `.gitignore`, jadi build perlu dijalankan kembali pada mesin atau pipeline deployment sebelum situs dipublikasikan.
+Build menghasilkan CSS minified di:
 
-## Perintah yang Tersedia
+```text
+dist/output.css
+```
 
-| Perintah               | Kegunaan                                       |
-| ---------------------- | ---------------------------------------------- |
-| `npm install`          | Memasang dependensi development.               |
-| `npm run dev`          | Menjalankan Tailwind watch dan server lokal.   |
-| `npm run dev:css`      | Menjalankan Tailwind CSS watch saja.           |
-| `npm run dev:serve`    | Menjalankan server statis saja pada port 3000. |
-| `npm run build`        | Membuat CSS minified untuk deployment.         |
-| `npm run lint`         | Menjalankan ESLint pada `src/js`.              |
-| `npm run format`       | Memformat seluruh repository dengan Prettier.  |
-| `npm run format:check` | Memeriksa format tanpa mengubah file.          |
-| `npm run check`        | Menjalankan lint dan pemeriksaan format.       |
+Folder `dist/` diabaikan Git. Jalankan `npm run build` kembali di mesin deployment atau pipeline CI sebelum situs dipublikasikan.
+
+## Perintah NPM
+
+| Perintah               | Kegunaan                                                |
+| ---------------------- | ------------------------------------------------------- |
+| `npm install`          | Memasang dependency development dari `package.json`.    |
+| `npm ci`               | Instalasi reproducible berdasarkan `package-lock.json`. |
+| `npm run dev`          | Menjalankan watcher CSS dan server lokal bersamaan.     |
+| `npm run dev:css`      | Menjalankan Tailwind CSS watch saja.                    |
+| `npm run dev:serve`    | Menjalankan server statis pada port 3000.               |
+| `npm run build`        | Membuat `dist/output.css` versi minified.               |
+| `npm run lint`         | Menjalankan ESLint pada `src/js`.                       |
+| `npm run format`       | Memformat seluruh repository dengan Prettier.           |
+| `npm run format:check` | Memeriksa format tanpa mengubah file.                   |
+| `npm run check`        | Menjalankan lint lalu format check.                     |
 
 ## Struktur Proyek
 
 ```text
 perpustakaan/
-├── index.html
-├── pustakawan.html
+├── index.html                    # halaman beranda
 ├── src/
-│   ├── pages/                 # halaman HTML selain beranda dan pustakawan
-│   │   ├── katalog.html
-│   │   ├── buku.html
-│   │   ├── koleksi.html
-│   │   ├── layanan.html
-│   │   ├── reservasi.html
-│   │   ├── berita.html
+│   ├── pages/                    # HTML halaman selain beranda
+│   │   ├── 404.html
 │   │   ├── berita-detail.html
-│   │   ├── tentang.html
+│   │   ├── berita.html
+│   │   ├── buku.html
 │   │   ├── kontak.html
+│   │   ├── koleksi.html
+│   │   ├── katalog.html
 │   │   ├── daftar-anggota.html
+│   │   ├── layanan.html
+│   │   ├── pustakawan.html
+│   │   ├── reservasi.html
 │   │   ├── simpanan.html
-│   │   └── 404.html
+│   │   └── tentang.html
 │   ├── css/
-│   │   └── input.css           # entry point Tailwind dan design token
+│   │   └── input.css              # entry point Tailwind dan design token
 │   └── js/
-│       ├── components/         # header, footer, kartu, toast, dll.
-│       ├── data/               # konten situs statis yang dapat diedit
-│       ├── pages/              # entry point setiap halaman + renderer bersama
-│       ├── services/           # akses Open Library, konten, dan state aplikasi
-│       └── utils/              # escape, URL, validasi, format, ikon, storage
+│       ├── components/            # layout dan komponen markup/perilaku
+│       ├── data/                  # konten situs statis
+│       ├── pages/                 # entry point halaman dan renderer bersama
+│       ├── services/              # API, data lokal, dan operasi state
+│       └── utils/                 # helper URL, storage, format, validasi, ikon
 ├── assets/
 │   └── img/
-│       ├── hero/
-│       ├── koleksi/
-│       ├── buku/
-│       ├── staf/
-│       ├── CREDITS.md
-│       └── ...
-├── dist/
-│   └── output.css              # hasil build; tidak di-commit
-├── AGENTS.md                   # aturan kerja dan checklist implementasi
-├── Design.md                   # sumber kebenaran visual
-├── PRD.md                      # requirement produk dan acceptance criteria
+│       ├── buku/                  # cover fallback
+│       ├── berita/                # gambar berita lokal
+│       ├── hero/                  # gambar hero
+│       ├── koleksi/               # banner koleksi
+│       ├── staf/                  # foto pustakawan
+│       └── CREDITS.md             # sumber dan lisensi gambar
+├── dist/                          # hasil build; tidak di-commit
+├── AGENTS.md                      # aturan coding dan Definition of Done
+├── Design.md                      # panduan visual dan design token
+├── PRD.md                         # requirement produk dan acceptance criteria
 ├── package.json
+├── package-lock.json
 ├── eslint.config.js
-├── .prettierrc
-├── .gitignore
+├── vercel.json
 ├── robots.txt
 ├── sitemap.xml
 └── favicon.svg
 ```
 
-### Alur JavaScript
-
-Setiap file HTML menunjuk ke entry point halaman di `src/js/pages/`, misalnya:
+Semua halaman HTML tetap statis. JavaScript halaman dipasang dengan:
 
 ```html
 <script type="module" src="./src/js/pages/catalog.js"></script>
 ```
 
-Entry point tersebut mendelegasikan rendering ke `src/js/pages/app.js`, lalu `startPage()`:
-
-1. Memasang header dan footer melalui `mountLayout()`.
-2. Memasang perilaku global seperti menu, dropdown, toast, bookmark badge, dan tombol kembali ke atas.
-3. Memilih renderer sesuai `data-page` pada `<body>`.
-4. Mengambil konten melalui service.
-5. Merender konten halaman ke `#main`.
+Beberapa entry point seperti `services.js`, `saved.js`, dan `about.js` memanggil `startPage()` dari `src/js/pages/app.js`. Halaman lain seperti beranda, katalog, dan detail buku memiliki entry point dengan perilaku khusus tetapi tetap memakai komponen serta service bersama.
 
 ## Daftar Halaman
 
-Beranda dan halaman pustakawan berada di root; halaman lainnya berada di `src/pages/`.
-
-| File                  | `data-page`   | Isi                                              | Parameter utama                          |
-| --------------------- | ------------- | ------------------------------------------------ | ---------------------------------------- |
-| `index.html`          | `home`        | Beranda dan pencarian cepat                      | —                                        |
-| `katalog.html`        | `catalog`     | Pencarian, filter, pengurutan, dan paginasi buku | `q`, `kategori`, `bahasa`, `urut`, `hal` |
-| `buku.html`           | `book`        | Detail satu buku                                 | `id`                                     |
-| `koleksi.html`        | `collections` | Koleksi dan buku pilihan berdasarkan kategori    | `kategori`                               |
-| `layanan.html`        | `services`    | Daftar layanan dan aturan peminjaman             | Anchor `#id-layanan`                     |
-| `reservasi.html`      | `reservation` | Form reservasi dan daftar reservasi lokal        | `layanan`, `pustakawan`, `buku`          |
-| `pustakawan.html`     | `librarians`  | Daftar pustakawan dan jadwal                     | —                                        |
-| `berita.html`         | `news`        | Daftar berita dan filter kategori                | `kategori`, `hal`                        |
-| `berita-detail.html`  | `news-detail` | Detail berita                                    | `id`                                     |
-| `tentang.html`        | `about`       | Profil, visi, misi, statistik, dan jam buka      | —                                        |
-| `kontak.html`         | `contact`     | Kontak, formulir pesan, dan FAQ                  | —                                        |
-| `daftar-anggota.html` | `membership`  | Pendaftaran anggota demo                         | —                                        |
-| `simpanan.html`       | `saved`       | Daftar buku yang disimpan                        | —                                        |
-| `404.html`            | `not-found`   | Halaman tidak ditemukan dan pencarian katalog    | —                                        |
+| File                            | `data-page`   | Isi                                                                            | Parameter atau state                     |
+| ------------------------------- | ------------- | ------------------------------------------------------------------------------ | ---------------------------------------- |
+| `index.html`                    | `home`        | Beranda, pencarian cepat, koleksi, buku terbaru, reservasi, pustakawan, berita | —                                        |
+| `src/pages/katalog.html`        | `catalog`     | Pencarian, filter, pengurutan, dan paginasi buku                               | `q`, `kategori`, `bahasa`, `urut`, `hal` |
+| `src/pages/buku.html`           | `book`        | Detail buku dan buku terkait                                                   | `id`                                     |
+| `src/pages/koleksi.html`        | `collections` | Detail koleksi dan empat buku pilihan                                          | `kategori`                               |
+| `src/pages/layanan.html`        | `services`    | Layanan dan aturan peminjaman                                                  | anchor layanan                           |
+| `src/pages/reservasi.html`      | `reservation` | Form reservasi dan reservasi tersimpan                                         | `layanan`, `pustakawan`, `buku`          |
+| `src/pages/pustakawan.html`     | `librarians`  | Daftar pustakawan dan bidang konsultasi                                        | —                                        |
+| `src/pages/berita.html`         | `news`        | Daftar berita, filter, dan paginasi                                            | `kategori`, `hal`                        |
+| `src/pages/berita-detail.html`  | `news-detail` | Detail berita                                                                  | `id`                                     |
+| `src/pages/tentang.html`        | `about`       | Profil, visi, misi, statistik, dan jam buka                                    | —                                        |
+| `src/pages/kontak.html`         | `contact`     | Kontak, form pesan, dan FAQ                                                    | —                                        |
+| `src/pages/daftar-anggota.html` | `membership`  | Pendaftaran anggota demo                                                       | —                                        |
+| `src/pages/simpanan.html`       | `saved`       | Buku yang disimpan pengguna                                                    | `localStorage`                           |
+| `src/pages/404.html`            | `not-found`   | Halaman tidak ditemukan dan pencarian katalog                                  | —                                        |
 
 ## Parameter URL
 
-Contoh tautan yang dapat digunakan atau dibagikan:
+Contoh path dari root repository:
 
 ```text
 # Pencarian dari beranda
-./katalog.html?q=web&kategori=teknologi
+./src/pages/katalog.html?q=web&kategori=teknologi
 
-# Filter katalog
-./katalog.html?kategori=sains&bahasa=id&urut=popular&hal=2
+# Filter dan pengurutan katalog
+./src/pages/katalog.html?kategori=sains&bahasa=id&urut=popular&hal=2
 
-# Detail buku
-./buku.html?id=OL27448W
+# Detail buku Open Library
+./src/pages/buku.html?id=OL27448W
 
 # Koleksi tertentu
-./koleksi.html?kategori=teknologi
+./src/pages/koleksi.html?kategori=teknologi
 
 # Layanan tertentu
-./layanan.html#ruang-diskusi
+./src/pages/layanan.html#ruang-diskusi
 
-# Prefill form reservasi
-./reservasi.html?layanan=ruang-diskusi&pustakawan=anjelina-rossy
-./reservasi.html?buku=OL27448W
+# Prefill reservasi
+./src/pages/reservasi.html?layanan=ruang-diskusi&pustakawan=anjelina-rossy
+./src/pages/reservasi.html?buku=OL27448W
 
 # Berita
-./berita.html?kategori=literasi&hal=1
-./berita-detail.html?id=mengapa-literasi-penting
+./src/pages/berita.html?kategori=literasi&hal=1
+./src/pages/berita-detail.html?id=mengapa-literasi-penting
 ```
 
-Nilai query string berasal dari URL pengguna dan harus tetap diproses melalui helper URL serta di-escape sebelum masuk ke markup.
+State katalog dan berita dipertahankan di query string. Nilai dari URL harus diproses melalui helper di `src/js/utils/url.js`, divalidasi, dan di-escape sebelum digunakan dalam markup.
 
-## Arsitektur Aplikasi
+## Arsitektur
 
-### `components/`
+### Alur sebuah halaman
 
-Komponen untuk markup dan perilaku lintas halaman, antara lain:
+1. Browser membuka file HTML statis.
+2. Entry point ES Module di `src/js/pages/` dipanggil.
+3. `mountLayout()` memasang header, footer, badge simpanan, menu mobile, pencarian global, dan perilaku layout.
+4. Entry point memuat data melalui service.
+5. Renderer membuat markup ke `#main` menggunakan komponen dan `escapeHTML()` untuk nilai dinamis.
+6. Interaksi pengguna mengubah URL, API, atau state browser sesuai kebutuhan.
 
-- `layout.js`: memasang layout global dan event global.
-- `header.js` dan `footer.js`: navigasi, kontak, galeri, dan tahun copyright.
+### `src/js/components/`
+
+Komponen lintas halaman meliputi:
+
+- `layout.js`: pemasangan header/footer dan perilaku global.
+- `header.js`, `footer.js`: navigasi, kontak, media sosial, dan tahun copyright.
 - `book-card.js`, `service-card.js`, `librarian-card.js`, `post-card.js`: kartu konten.
-- `section-heading.js`, `breadcrumb.js`, `pagination.js`: pola layout berulang.
-- `accordion.js`: FAQ dan panel yang dapat dibuka/tutup.
-- `toast.js`: notifikasi non-blocking dengan `role="status"`.
+- `section-heading.js`, `breadcrumb.js`, `pagination.js`: pola layout.
+- `accordion.js`: FAQ dan panel buka/tutup.
+- `reservation-overlay.js`: konfirmasi hasil reservasi.
+- `toast.js`: notifikasi singkat dengan status yang dapat dibaca screen reader.
 
-### `services/`
+### `src/js/services/`
 
-Service adalah satu-satunya lapisan yang semestinya mengakses modul data dan storage:
+Service menjadi batas akses data dan operasi state:
 
-- `book-service.js`: mengambil metadata dinamis dari Open Library, menormalisasi hasil API, filter, pengurutan, detail, dan buku terkait.
-- `content-service.js`: kategori, layanan, pustakawan, berita, dan FAQ.
-- `bookmark-service.js`: tambah, hapus, dan kosongkan simpanan.
+- `book-service.js`: Open Library Search, Works, Books, Authors, Covers, normalisasi buku, pencarian, detail, dan buku terkait.
+- `content-service.js`: akses kategori, layanan, pustakawan, situs, berita, dan FAQ.
+- `bookmark-service.js`: baca, tambah, hapus, dan kosongkan simpanan.
 - `reservation-service.js`: simpan, baca, dan batalkan reservasi.
-- `member-service.js`: membuat nomor anggota sementara.
+- `member-service.js`: membuat nomor anggota sementara dan menyimpan pendaftaran demo.
 
-### `data/`
+### `src/js/data/`
 
-Konten lokal saat ini terdiri dari tujuh kategori, delapan layanan, empat pustakawan, enam berita, dan enam FAQ. Tidak ada seed buku lokal; katalog mengambil data langsung dari Open Library melalui `src/js/services/book-service.js`.
+Konten lokal yang dapat diedit:
 
-### `utils/`
+- `site.js`: nama, alamat, jam, media sosial, hero, dan galeri.
+- `categories.js`: tujuh kategori koleksi.
+- `services.js`: delapan layanan.
+- `librarians.js`: data pustakawan.
+- `posts.js`: berita dan artikel.
+- `faqs.js`: pertanyaan umum.
 
-Utility utama mencakup:
+Halaman dan komponen sebaiknya tidak mengimpor data lokal secara langsung jika data tersebut sudah memiliki service.
 
-- `escape.js`: mencegah nilai dinamis mentah masuk ke HTML.
-- `storage.js`: wrapper `localStorage` dengan fallback `Map` di memori.
+### `src/js/utils/`
+
+- `escape.js`: escape nilai dinamis sebelum masuk template HTML.
+- `storage.js`: wrapper storage dengan fallback memori.
 - `url.js`: membaca dan memperbarui query string.
-- `validate.js`: validasi nama, email, telepon, layanan, persetujuan, dan tanggal reservasi.
-- `format.js`: normalisasi pencarian, tanggal, dan perhitungan tanggal.
-- `icons.js`: kumpulan SVG inline.
-- `dom.js` dan `debounce.js`: helper DOM dan debounce.
+- `validate.js`: validasi field dan aturan tanggal reservasi.
+- `format.js`: format tanggal, normalisasi teks, dan helper tanggal.
+- `icons.js`: katalog ikon SVG inline.
+- `dom.js`: helper DOM.
+- `debounce.js`: pembatasan frekuensi input pencarian.
+
+## Sumber Data dan Open Library
+
+### Data lokal
+
+Konten statis tidak membutuhkan jaringan. Perubahan dilakukan pada modul di `src/js/data/`, lalu halaman mengambilnya melalui `content-service.js`.
+
+### Data buku
+
+Tidak diperlukan API key. `book-service.js` menggunakan:
+
+- `https://openlibrary.org/search.json` untuk daftar dan pencarian buku.
+- `https://openlibrary.org/works/{id}.json` untuk detail Work.
+- `https://openlibrary.org/books/{id}.json` untuk detail Edition.
+- Endpoint Authors dan Editions untuk melengkapi penulis serta metadata detail.
+- `https://covers.openlibrary.org/b/id/{coverId}-M.jpg` untuk sampul.
+
+Request pencarian sengaja dibatasi agar tidak membebani Open Library:
+
+- Hanya meminta field yang dipakai kartu dan pengurutan: `key`, `title`, `author_name`, `cover_i`, `first_publish_year`, `ratings_average`, dan `ratings_count`.
+- Tidak memakai wildcard global `title:*`, karena query tersebut memaksa pencarian katalog besar sebelum pengurutan.
+- Saat pencarian kosong tanpa filter, digunakan query umum `book` sebagai kompromi performa untuk halaman awal.
+- Kategori dan bahasa ditambahkan ke query ketika filter dipilih.
+
+Konsekuensinya, hasil awal tanpa kata kunci adalah hasil jelajah praktis, bukan dump seluruh katalog. Pencarian kata kunci tetap menjadi cara utama untuk menemukan judul tertentu.
+
+Open Library hanya menyediakan bibliografi umum. Stok lokal, lokasi rak, status peminjaman, dan reservasi fisik tidak dapat dianggap akurat sampai ada backend perpustakaan yang menjadi sumber data resmi.
 
 ## Mengubah Konten
 
-### Mengubah identitas situs
+### Identitas situs
 
 Edit `src/js/data/site.js` untuk mengubah:
 
-- Nama dan tagline.
-- Alamat, telepon, dan email.
+- Nama, tagline, alamat, telepon, dan email.
+- Jam operasional dan hari tutup.
 - Tautan media sosial.
 - Foto hero dan galeri.
-- Jam operasional dan hari tutup.
 
-### Katalog buku dari Open Library
-
-Katalog, halaman Koleksi, buku terbaru di beranda, detail buku, buku terkait, dan Simpanan menggunakan Open Library API. Tidak diperlukan API key. Jalankan situs melalui server lokal agar browser dapat melakukan request API:
-
-```bash
-npm run dev
-```
-
-Konfigurasi integrasi berada di `src/js/services/book-service.js`:
-
-- `searchBooks()` menggunakan Search API dengan paginasi, kategori, bahasa, dan pengurutan.
-- `getBookById()` mengambil Work atau Edition berdasarkan ID Open Library.
-- Cover diambil dari Covers API dengan cover ID yang dikembalikan Open Library.
-- Hasil API dinormalisasi ke skema kartu buku yang dipakai Pustakaloka.
-
-Open Library hanya menyediakan metadata katalog umum. Stok fisik, lokasi rak, peminjaman, dan reservasi perpustakaan belum disediakan API sehingga ditampilkan sebagai “Perlu dikonfirmasi”. Jika nanti tersedia backend perpustakaan, field tersebut dapat digabungkan di service tanpa mengubah komponen kartu.
-
-### Mengubah kategori, layanan, pustakawan, berita, dan FAQ
+### Kategori, layanan, pustakawan, berita, dan FAQ
 
 | Konten           | File                        |
 | ---------------- | --------------------------- |
@@ -308,86 +376,120 @@ Open Library hanya menyediakan metadata katalog umum. Stok fisik, lokasi rak, pe
 | Berita           | `src/js/data/posts.js`      |
 | FAQ              | `src/js/data/faqs.js`       |
 
-Format objek dan aturan bisnis rinci dijelaskan di `PRD.md` dan `AGENTS.md`.
+Ikuti skema objek yang sudah ada. Untuk aturan bisnis dan acceptance criteria, lihat `PRD.md` dan `AGENTS.md`.
 
-### Mengubah visual
+### Visual
 
-Edit `src/css/input.css` untuk design token, komponen CSS berulang, dan sumber Tailwind. Gunakan token yang sudah ada seperti `brand-700`, `surface`, `ink-900`, dan `shadow-card`; hindari hard-code warna baru di markup. Detail visual lengkap ada di `Design.md`.
+Edit `src/css/input.css` untuk design token dan komponen CSS berulang. Gunakan token yang sudah tersedia seperti `brand-700`, `surface`, `ink-900`, dan `shadow-card`. Setelah menambah class Tailwind di JavaScript, pastikan file JavaScript tetap tercakup oleh `@source '../js';`.
 
-## Penyimpanan Browser
+### Menambah halaman
 
-Semua state transaksi pada versi demo berada di browser yang digunakan. Kunci yang dipakai:
+1. Buat HTML di `src/pages/` dengan `data-page` unik.
+2. Buat entry point di `src/js/pages/`.
+3. Pasang `mountLayout()` atau gunakan `startPage()` jika halaman cocok dengan renderer bersama.
+4. Tambahkan navigasi yang diperlukan pada `header.js` atau `footer.js`.
+5. Tambahkan URL produksi ke `sitemap.xml` dan perbarui `robots.txt`.
+6. Jalankan `npm run check` dan `npm run build`.
+
+## State Browser
+
+Semua state demo berada di browser pengguna dan tidak disinkronkan antarperangkat.
 
 | Kunci                      | Isi                                                              |
 | -------------------------- | ---------------------------------------------------------------- |
-| `pustakaloka:bookmarks`    | Array ID buku yang disimpan.                                     |
-| `pustakaloka:reservations` | Array data reservasi, kode, waktu pembuatan, dan status.         |
+| `pustakaloka:bookmarks`    | Array ID buku Open Library yang disimpan.                        |
+| `pustakaloka:reservations` | Array reservasi, kode, waktu pembuatan, dan status.              |
 | `pustakaloka:members`      | Array data pendaftaran anggota demo dan nomor anggota sementara. |
 
-Catatan:
+Catatan keamanan dan perilaku:
 
-- Data tidak dikirim ke server dari aplikasi ini.
-- Menghapus data situs/browser akan menghapus state lokal tersebut.
-- Mode privat, storage yang diblokir, atau storage penuh menggunakan fallback memori selama halaman masih terbuka.
-- Jangan menyimpan NIK, kata sandi, token, atau data sensitif lain di state demo.
-- Form Kontak hanya menampilkan toast sukses; belum terhubung ke email, Formspree, Netlify Forms, atau backend.
+- Jangan menyimpan NIK, kata sandi, token, atau rahasia lain di storage demo.
+- Menghapus data situs/browser akan menghapus state lokal.
+- Storage yang diblokir atau penuh memakai `Map` fallback selama halaman masih terbuka.
+- Fallback memori tidak bertahan setelah reload atau tab ditutup.
+- Form Kontak tidak mengirim email dan tidak memanggil layanan eksternal.
 
 ## Aset dan Lisensi
 
-Sumber gambar dan catatan lisensi ada di [`assets/img/CREDITS.md`](assets/img/CREDITS.md). Foto konten statis disimpan sebagai WebP lokal; sampul buku dinamis adalah satu-satunya gambar yang masih dapat diminta dari Open Library.
+Sumber serta catatan lisensi gambar dicatat di [`assets/img/CREDITS.md`](assets/img/CREDITS.md). Gambar konten lokal berada di `assets/img/`, sedangkan cover buku dimuat dinamis dari Open Library.
 
 Sebelum deployment publik:
 
 1. Pastikan setiap gambar memiliki sumber dan lisensi yang jelas.
-2. Jangan menyalin aset dari template referensi.
-3. Pertimbangkan mengunduh dan mengoptimalkan aset lokal bila hosting harus berjalan tanpa koneksi eksternal.
-4. Pertahankan `alt`, `width`, `height`, dan `loading="lazy"` sesuai kebutuhan gambar.
+2. Jangan menyalin aset dari template referensi tanpa izin.
+3. Pertahankan `alt`, `width`, `height`, dan lazy-loading yang sesuai.
+4. Jika hosting harus sepenuhnya offline, siapkan strategi penggantian cover Open Library dengan aset lokal berlisensi.
 
-## Build dan Deployment
+## Deployment
 
-Proyek dapat dipublikasikan ke GitHub Pages, Netlify, Vercel, atau hosting statis lain.
+Proyek dapat dipublikasikan ke Vercel, Netlify, GitHub Pages, atau hosting statis lain yang mendukung file root dan subfolder.
 
-Build lokal:
+### Vercel
+
+`vercel.json` sudah mendefinisikan:
+
+- Build command: `npm run build`
+- Output directory: `.`
+
+Dengan konfigurasi tersebut, HTML, `src/`, `assets/`, dan `dist/` dipublikasikan dari root repository.
+
+### Deployment manual
 
 ```bash
 npm ci
 npm run build
 ```
 
-Publikasikan file HTML di root, `src/`, `assets/`, `dist/`, `favicon.svg`, `robots.txt`, dan `sitemap.xml`. Jangan publikasikan `node_modules/`, file `.env`, atau secret.
+Publikasikan file dan folder berikut:
 
-Sebelum deployment produksi, perbarui placeholder berikut:
+```text
+index.html
+src/
+assets/
+dist/
+favicon.svg
+robots.txt
+sitemap.xml
+```
 
-- URL canonical dan Open Graph di setiap HTML.
-- `Sitemap:` pada `robots.txt`.
-- URL pada `sitemap.xml` yang saat ini masih menggunakan `https://example.com`.
-- URL media sosial, alamat, email, dan sumber aset di `src/js/data/site.js` serta `assets/img/CREDITS.md`.
+Jangan publikasikan `node_modules/`, `.env`, token, secret, atau file lokal pribadi.
 
-Contoh header keamanan yang dapat dikonfigurasi di hosting:
+### Sebelum produksi
+
+Perbarui placeholder yang masih menggunakan `example.com`:
+
+- `canonical` dan Open Graph pada seluruh HTML.
+- URL `Sitemap` di `robots.txt`.
+- URL pada `sitemap.xml`.
+- Informasi situs di `src/js/data/site.js`.
+- Sumber aset di `assets/img/CREDITS.md`.
+
+Contoh kebijakan CSP yang dapat disesuaikan di hosting:
 
 ```text
 Content-Security-Policy: default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://covers.openlibrary.org data:; connect-src 'self' https://openlibrary.org; script-src 'self'
 ```
 
-Sesuaikan CSP jika sumber font, gambar, atau aset berubah.
+Sesuaikan CSP jika font, gambar, API, atau sumber lain berubah.
 
 ## Troubleshooting
 
 ### `tailwindcss` tidak ditemukan
 
-Pastikan dependensi sudah terpasang:
+Pasang dependency lalu coba ulang:
 
 ```bash
 npm install
+npm run build
 ```
 
-Jika perlu, jalankan CLI melalui npm:
+Jika CLI tidak ditemukan langsung, jalankan:
 
 ```bash
 npx @tailwindcss/cli -i ./src/css/input.css -o ./dist/output.css --minify
 ```
 
-### Halaman kosong atau error module
+### Halaman kosong atau error `Failed to resolve module`
 
 Jangan membuka HTML dengan `file://`. Jalankan:
 
@@ -397,64 +499,78 @@ npm run dev
 
 Lalu buka `http://localhost:3000`.
 
+### Catalog atau detail buku gagal dimuat
+
+Periksa:
+
+1. Koneksi internet.
+2. Console browser untuk status Open Library.
+3. CSP `connect-src` jika aplikasi di-deploy.
+4. CSP `img-src` untuk cover Open Library.
+5. Apakah endpoint Open Library sedang membatasi atau mengalami gangguan.
+
 ### Perubahan class Tailwind tidak terlihat
 
-Pastikan class ditulis lengkap dan file sumber berada dalam cakupan `@source` di `src/css/input.css`. Jalankan ulang `npm run build` atau biarkan `npm run dev` menjalankan watch CSS.
+Pastikan class ditulis lengkap, bukan hasil penggabungan string parsial. Jalankan ulang `npm run build` atau biarkan `npm run dev` menjalankan watcher.
 
-### Data reservasi atau simpanan tidak muncul
+### Simpanan atau reservasi hilang
 
-Periksa bahwa browser mengizinkan storage untuk `localhost:3000`. Jika storage diblokir, data hanya tersedia di memori dan akan hilang setelah reload atau tab ditutup.
+State hanya tersimpan pada browser dan origin yang sama. Pastikan storage `localhost:3000` diizinkan. Jika storage diblokir, state hanya hidup di memori dan hilang setelah reload.
 
-### Gambar foto tidak tampil
+### Gambar lokal tidak tampil
 
-Foto konten statis berada di `assets/img/**/*.webp` dan tidak membutuhkan koneksi ke CDN foto pihak ketiga. Periksa file lokal serta URL pada `src/js/data/site.js`, `src/js/data/categories.js`, `src/js/data/librarians.js`, dan `src/js/data/posts.js`. Sampul buku katalog tetap memerlukan koneksi ke Open Library.
+Periksa path di `src/js/data/site.js`, `categories.js`, `librarians.js`, dan `posts.js`. Pastikan file berada di `assets/img/` dengan nama serta ekstensi yang sama.
 
-## Pemeriksaan Kualitas
+## Checklist QA
 
-Pemeriksaan otomatis minimum:
+### Pemeriksaan otomatis
 
 ```bash
 npm run check
 npm run build
 ```
 
-Pemeriksaan manual yang disarankan:
+### Skenario manual utama
 
-- Buka semua 14 halaman melalui server lokal.
+- Buka beranda dan seluruh 14 halaman melalui `http://localhost:3000`.
 - Uji viewport 360, 390, 768, 1024, 1280, dan 1440 px.
-- Uji pencarian dari hero dan filter katalog.
-- Uji detail buku valid dan `id` yang tidak ditemukan.
-- Simpan buku, reload, hapus dari Simpanan, dan kosongkan daftar.
+- Cari buku dari hero, header, dan halaman katalog.
+- Uji kategori, bahasa, pengurutan, paginasi, dan reset filter.
+- Uji `buku.html` dengan ID valid dan ID yang tidak ditemukan.
+- Simpan buku, reload, buka Simpanan, hapus buku, lalu pastikan badge berubah.
 - Uji reservasi valid, tanggal Minggu, tanggal di luar rentang, dan pembatalan.
-- Uji pendaftaran anggota dan nomor anggota sementara.
-- Uji menu mobile, dropdown, tombol Escape, fokus keyboard, dan skip link.
-- Uji FAQ, paginasi, query string, dan tombol salin tautan.
-- Pastikan tidak ada error/warning di console.
+- Uji prefill reservasi melalui `layanan`, `pustakawan`, dan `buku`.
+- Uji pendaftaran anggota dengan field kosong dan persetujuan tidak dicentang.
+- Uji form Kontak dan FAQ.
+- Uji menu mobile, overlay pencarian, menu tambahan, tombol Escape, dan skip link.
+- Uji navigasi keyboard untuk tab koleksi, accordion, tombol, dan form.
+- Uji `prefers-reduced-motion` dan zoom 200%.
+- Pastikan tidak ada scroll horizontal yang tidak diinginkan.
+- Pastikan console tidak berisi error yang berasal dari aplikasi.
 - Jalankan Lighthouse dan axe DevTools sebelum rilis.
-
-Checklist lengkap dan aturan implementasi ada di bagian Definition of Done pada `AGENTS.md`.
 
 ## Batasan Saat Ini
 
-Versi ini sengaja belum menyediakan:
+Versi demo ini belum menyediakan:
 
 - Autentikasi, akun anggota, dan dashboard admin.
 - Backend, database, sinkronisasi antarperangkat, atau sistem sirkulasi nyata.
 - Peminjaman/pengembalian aktual dan perhitungan denda terintegrasi.
 - Pembayaran online atau pembaca e-book.
-- Pengiriman formulir Kontak ke petugas.
+- Pengiriman form Kontak ke petugas.
+- Integrasi stok fisik dengan katalog Open Library.
 - Analytics atau pelacakan pengguna.
 - Multi-bahasa dan dark mode.
 
-Fitur-fitur tersebut dapat dipertimbangkan pada fase lanjutan setelah kebutuhan layanan, domain produksi, dan backend ditetapkan.
+Jika kebutuhan berubah, tambahkan backend secara terpisah melalui service layer. Jangan menaruh secret atau kredensial API di JavaScript yang dikirim ke browser.
 
 ## Dokumentasi Terkait
 
-- [`AGENTS.md`](AGENTS.md): aturan coding, aksesibilitas, keamanan, struktur, dan checklist pengerjaan.
-- [`PRD.md`](PRD.md): tujuan produk, daftar halaman, requirement fungsional, model data, dan acceptance criteria.
-- [`Design.md`](Design.md): design token, layout, komponen visual, responsivitas, dan panduan aksesibilitas.
-- [`assets/img/CREDITS.md`](assets/img/CREDITS.md): sumber dan lisensi gambar.
+- [`AGENTS.md`](AGENTS.md): aturan coding, struktur, keamanan, aksesibilitas, dan Definition of Done.
+- [`PRD.md`](PRD.md): tujuan produk, requirement fungsional, skema data, dan acceptance criteria.
+- [`Design.md`](Design.md): design token, pola layout, komponen visual, dan panduan aksesibilitas.
+- [`assets/img/CREDITS.md`](assets/img/CREDITS.md): sumber dan lisensi aset gambar.
 
-## Lisensi Proyek
+## Lisensi
 
 Belum ada lisensi open-source yang ditetapkan untuk kode proyek ini. Tambahkan file `LICENSE` sebelum repository didistribusikan sebagai perangkat lunak open-source.
