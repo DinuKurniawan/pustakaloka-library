@@ -1,8 +1,12 @@
 import { read, write } from '../utils/storage.js';
+import { waitForIdle } from '../utils/idle.js';
 
 const KEY = 'pustakaloka:bookmarks';
 
-export const getBookmarks = async () => read(KEY, []);
+export const getBookmarks = async () => {
+  await waitForIdle();
+  return read(KEY, []);
+};
 
 export async function toggleBookmark(bookId) {
   const current = await getBookmarks();

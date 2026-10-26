@@ -1,4 +1,4 @@
-import { headerMarkup, updateBookmarkCount } from './header.js';
+import { headerMarkup, scheduleBookmarkCount } from './header.js';
 import { footerMarkup } from './footer.js';
 import { showToast } from './toast.js';
 
@@ -22,8 +22,8 @@ export function mountLayout() {
   document.querySelectorAll('[data-year]').forEach((node) => {
     node.textContent = String(new Date().getFullYear());
   });
-  updateBookmarkCount();
-  window.addEventListener('bookmarks-changed', updateBookmarkCount);
+  scheduleBookmarkCount();
+  window.addEventListener('bookmarks-changed', scheduleBookmarkCount);
   document.addEventListener('click', (event) => {
     const action = event.target.closest('[data-action]')?.dataset.action;
     if (action === 'open-mobile') {
