@@ -330,8 +330,6 @@ Halaman dan komponen sebaiknya tidak mengimpor data lokal secara langsung jika d
 - `validate.js`: validasi field dan aturan tanggal reservasi.
 - `format.js`: format tanggal, normalisasi teks, dan helper tanggal.
 - `icons.js`: katalog ikon SVG inline.
-- `dom.js`: helper DOM.
-- `debounce.js`: pembatasan frekuensi input pencarian.
 
 ## Sumber Data dan Open Library
 

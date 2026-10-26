@@ -24,6 +24,6 @@ Foto konten statis diunduh dari sumber stok bebas dan disimpan sebagai WebP loka
 
 Foto dikirim sebagai WebP terkompresi: hero sekitar 238 KB, sedangkan foto non-hero di bawah 150 KB sesuai batas performa pada `Design.md`.
 
-Ilustrasi SVG lokal lama tetap tersedia sebagai fallback/demo offline: `hero/hero.svg`, `koleksi/collection.svg`, `staf/librarian.svg`, dan `berita/news.svg`.
+Ilustrasi SVG lokal yang masih digunakan adalah `staf/librarian.svg` sebagai ilustrasi bagian reservasi beranda.
 
 Sampul buku katalog dinamis berasal dari Open Library Covers API dan ditampilkan menggunakan cover ID yang dikembalikan oleh Open Library. Sampul fallback lokal berada di `buku/cover.svg`.
