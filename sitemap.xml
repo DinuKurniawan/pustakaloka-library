@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.com/</loc></url>
+  <url><loc>https://example.com/src/pages/katalog.html</loc></url>
+  <url><loc>https://example.com/src/pages/koleksi.html</loc></url>
+  <url><loc>https://example.com/src/pages/layanan.html</loc></url>
+  <url><loc>https://example.com/src/pages/reservasi.html</loc></url>
+  <url><loc>https://example.com/src/pages/pustakawan.html</loc></url>
+  <url><loc>https://example.com/src/pages/berita.html</loc></url>
+  <url><loc>https://example.com/src/pages/tentang.html</loc></url>
+  <url><loc>https://example.com/src/pages/kontak.html</loc></url>
+  <url><loc>https://example.com/src/pages/daftar-anggota.html</loc></url>
+</urlset>

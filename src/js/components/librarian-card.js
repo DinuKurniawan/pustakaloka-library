@@ -1,0 +1,5 @@
+import { icon } from '../utils/icons.js';
+import { escapeHTML as e } from '../utils/escape.js';
+
+export const librarianCard = (person) =>
+  `<article class="group relative overflow-hidden bg-white shadow-card"><img src="${e(person.photo)}" alt="Foto ${e(person.name)}" width="480" height="640" loading="lazy" decoding="async" class="aspect-[3/4] w-full object-cover" /><div class="p-5"><h3 class="text-lg font-semibold">${e(person.name)}</h3><p class="text-[13px] text-subtle">${e(person.title)} · ${e(person.field)}</p></div><div class="absolute inset-x-0 bottom-0 translate-y-full bg-brand-700 p-5 text-white transition duration-300 group-hover:translate-y-0 group-focus-within:translate-y-0"><p class="font-semibold">${e(person.name)}</p><p class="text-sm text-white/90">${e(person.field)}</p><p class="mt-3 flex items-center gap-2 text-xs">${icon('clock', { class: 'size-4' })}${e(person.schedule.days)} · ${e(person.schedule.time)}</p><a class="btn-light mt-4 w-full text-xs" href="./src/pages/reservasi.html?pustakawan=${encodeURIComponent(person.id)}">Reservasi konsultasi</a></div></article>`;

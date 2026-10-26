@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+@source '../js';
+@source '../../*.html';
+
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #e6f7f7;
+  --color-brand-100: #c2ebec;
+  --color-brand-200: #99dedf;
+  --color-brand-300: #66cdcf;
+  --color-brand-400: #2ebfc1;
+  --color-brand-500: #0fb3b5;
+  --color-brand-600: #0a9a9c;
+  --color-brand-700: #087a7d;
+  --color-brand-800: #065f62;
+  --color-brand-900: #044749;
+  --color-ink-900: #2b2b2b;
+  --color-ink-700: #444444;
+  --color-body: #666666;
+  --color-subtle: #757575;
+  --color-line: #e8e8e8;
+  --color-field: #eeeeee;
+  --color-surface: #f5f5f5;
+  --color-charcoal-600: #5c5c5c;
+  --color-charcoal-700: #4a4a4a;
+  --color-charcoal-900: #333333;
+  --color-success-50: #f0fdf4;
+  --color-success-700: #15803d;
+  --color-warning-50: #fffbeb;
+  --color-warning-700: #b45309;
+  --color-danger-50: #fef2f2;
+  --color-danger-700: #b91c1c;
+  --shadow-card: 0 5px 20px rgb(0 0 0 / 0.08);
+  --shadow-card-hover: 0 12px 32px rgb(0 0 0 / 0.14);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-body bg-white font-sans text-[15px] leading-7 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink-900 font-bold;
+  }
+
+  :focus-visible {
+    @apply outline-brand-700 outline-2 outline-offset-2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-[1170px] px-4 sm:px-6;
+  }
+
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded px-6 text-[13px] font-semibold tracking-wider uppercase transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-brand-700 hover:bg-brand-800 inline-flex min-h-11 items-center justify-center gap-2 rounded px-6 text-[13px] font-semibold tracking-wider text-white uppercase transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-light {
+    @apply text-ink-900 hover:bg-brand-50 inline-flex min-h-11 items-center justify-center gap-2 rounded bg-white px-6 text-[13px] font-semibold tracking-wider uppercase transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-outline {
+    @apply border-brand-700 text-brand-700 hover:bg-brand-700 inline-flex min-h-11 items-center justify-center gap-2 rounded border px-6 text-[13px] font-semibold tracking-wider uppercase transition duration-200 hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .field {
+    @apply bg-field text-ink-900 placeholder:text-subtle focus:border-brand-700 block min-h-11 w-full rounded border border-transparent px-4 text-sm focus:bg-white focus:outline-none;
+  }
+
+  .field[aria-invalid='true'] {
+    @apply border-danger-700 bg-white;
+  }
+
+  .nav-slant {
+    clip-path: polygon(48px 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .tab-arrow::after {
+    content: '';
+    @apply border-l-brand-700 absolute top-1/2 -right-2.5 -translate-y-1/2 border-y-[10px] border-l-[10px] border-y-transparent;
+  }
+
+  .page-banner {
+    @apply bg-charcoal-700 py-14 text-white md:py-20;
+  }
+
+  .prose-library p {
+    @apply mb-5 leading-8;
+  }
+
+  .prose-library h2 {
+    @apply mt-10 mb-4 text-2xl;
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-collection-tabs] > [data-tab],
+  [data-full-tabs] > [role='tab'] {
+    width: 100%;
+  }
+}
+
+form[data-home-search] {
+  gap: 1rem !important;
+  padding: 1.5rem !important;
+}
+
+form[data-home-search] .field,
+form[data-home-search] .btn-primary {
+  min-height: 3.5rem !important;
+}
+
+form[data-home-search] .field {
+  font-size: 1rem !important;
+}
+
+@media (min-width: 768px) {
+  a[aria-label='Facebook'],
+  a[aria-label='X'],
+  a[aria-label='Instagram'] {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    font-size: 1rem;
+  }
+}

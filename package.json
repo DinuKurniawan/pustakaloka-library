@@ -1,0 +1,24 @@
+{
+  "name": "pustakaloka",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:css": "tailwindcss -i ./src/css/input.css -o ./dist/output.css --watch",
+    "dev:serve": "serve . -l 3000",
+    "dev": "concurrently -n css,web -c cyan,green \"npm:dev:css\" \"npm:dev:serve\"",
+    "build": "tailwindcss -i ./src/css/input.css -o ./dist/output.css --minify",
+    "lint": "eslint src/js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "serve": "^14.2.5",
+    "tailwindcss": "^4.1.14"
+  }
+}
