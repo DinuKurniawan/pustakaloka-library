@@ -7,8 +7,7 @@ export const posts = [
     date: '2026-10-01',
     excerpt:
       'Bukan sekadar bisa membaca, literasi membantu kita memilih informasi yang dapat dipercaya.',
-    image:
-      'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=960&h=640&q=80',
+    image: '/assets/img/berita/news.svg',
     tags: ['literasi', 'informasi'],
     body: [
       {
@@ -30,8 +29,7 @@ export const posts = [
     date: '2026-09-22',
     excerpt:
       'Ajak keluarga memilih buku, membaca bersama, dan membuat karya kecil di ruang komunitas.',
-    image:
-      'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=960&h=640&q=80',
+    image: '/assets/img/berita/news.svg',
     tags: ['kegiatan', 'keluarga'],
     body: [
       {
@@ -52,8 +50,7 @@ export const posts = [
     date: '2026-09-15',
     excerpt:
       'Puluhan judul baru tentang pemrograman, data, dan desain telah hadir di rak teknologi.',
-    image:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=960&h=640&q=80',
+    image: '/assets/img/berita/news.svg',
     tags: ['koleksi', 'teknologi'],
     body: [
       {
@@ -69,8 +66,7 @@ export const posts = [
     author: 'Anjelina Rossy',
     date: '2026-08-29',
     excerpt: 'Lima kebiasaan kecil agar buku tetap nyaman dibaca oleh banyak orang.',
-    image:
-      'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=960&h=640&q=80',
+    image: '/assets/img/berita/news.svg',
     tags: ['literasi', 'koleksi'],
     body: [
       {
@@ -86,8 +82,7 @@ export const posts = [
     author: 'Anjelina Rossy',
     date: '2026-08-12',
     excerpt: 'Sesi praktis untuk pelajar dan mahasiswa yang ingin menulis dengan sumber yang rapi.',
-    image:
-      'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=960&h=640&q=80',
+    image: '/assets/img/berita/news.svg',
     tags: ['kelas', 'referensi'],
     body: [
       {
@@ -103,8 +98,7 @@ export const posts = [
     author: 'Admin Pustakaloka',
     date: '2026-07-30',
     excerpt: 'Mulai Agustus, layanan Sabtu berlangsung pukul 08.00 hingga 12.00.',
-    image:
-      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=960&h=640&q=80',
+    image: '/assets/img/berita/news.svg',
     tags: ['pengumuman'],
     body: [
       {

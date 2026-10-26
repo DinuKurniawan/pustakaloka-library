@@ -3,12 +3,14 @@ import { faqs } from '../data/faqs.js';
 import { librarians } from '../data/librarians.js';
 import { posts } from '../data/posts.js';
 import { services } from '../data/services.js';
+import { site } from '../data/site.js';
 
 export const getCategories = async () => categories;
 export const getCategoryById = async (id) =>
   categories.find((category) => category.id === id) ?? categories[0];
 export const getServices = async () => services;
 export const getLibrarians = async () => librarians;
+export const getSite = async () => site;
 export const getPosts = async ({ category = '', page = 1, perPage = 6 } = {}) => {
   const filtered = category ? posts.filter((post) => post.category === category) : posts;
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));

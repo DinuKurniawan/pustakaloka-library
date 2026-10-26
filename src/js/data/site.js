@@ -11,14 +11,14 @@ export const site = {
     youtube: 'https://www.youtube.com/',
   },
   images: {
-    hero: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&h=900&q=85',
+    hero: '/assets/img/hero/hero.svg',
     gallery: [
-      'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=240&h=240&q=80',
-      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=240&h=240&q=80',
-      'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=240&h=240&q=80',
-      'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=240&h=240&q=80',
-      'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=240&h=240&q=80',
-      'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=240&h=240&q=80',
+      '/assets/img/koleksi/collection.svg',
+      '/assets/img/koleksi/collection.svg',
+      '/assets/img/koleksi/collection.svg',
+      '/assets/img/koleksi/collection.svg',
+      '/assets/img/koleksi/collection.svg',
+      '/assets/img/koleksi/collection.svg',
     ],
   },
   hours: [

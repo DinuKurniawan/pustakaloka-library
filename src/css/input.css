@@ -122,6 +122,11 @@
   .prose-library h2 {
     @apply mt-10 mb-4 text-2xl;
   }
+
+  [data-home-below-fold] {
+    content-visibility: auto;
+    contain-intrinsic-size: 700px;
+  }
 }
 
 @media (min-width: 1024px) {
