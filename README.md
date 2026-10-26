@@ -462,7 +462,7 @@ Jangan publikasikan `node_modules/`, `.env`, token, secret, atau file lokal prib
 
 ### Cloudflare Pages / CDN
 
-File [`_headers`](_headers) disalin otomatis ke `dist/` oleh `npm run build`. Untuk pengaturan dashboard Cloudflare:
+Untuk pengaturan dashboard Cloudflare:
 
 1. Pada **Web Analytics**, matikan **Automatic Web Analytics injection**. Jika beacon diperlukan, pasang script beacon sendiri dengan atribut `defer` dan ukur dampaknya kembali.
 2. Pada **Speed → Optimization**, matikan **Rocket Loader** agar ES Modules dan urutan bootstrap tidak diubah.

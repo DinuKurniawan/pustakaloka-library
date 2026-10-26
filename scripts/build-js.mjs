@@ -41,7 +41,6 @@ await cp(path.join(root, 'assets'), path.join(dist, 'assets'), { recursive: true
 await cp(path.join(root, 'favicon.svg'), path.join(dist, 'favicon.svg'));
 await cp(path.join(root, 'robots.txt'), path.join(dist, 'robots.txt'));
 await cp(path.join(root, 'sitemap.xml'), path.join(dist, 'sitemap.xml'));
-await cp(path.join(root, '_headers'), path.join(dist, '_headers'));
 
 const sourcePages = [
   'index.html',
